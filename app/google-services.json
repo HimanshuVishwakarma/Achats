@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "593538082186",
+    "firebase_url": "https://achat-ff405.firebaseio.com",
+    "project_id": "achat-ff405",
+    "storage_bucket": "achat-ff405.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:593538082186:android:4350b749d22e841e",
+        "android_client_info": {
+          "package_name": "com.himanshu.achats"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "593538082186-0b589jm065u4moivj8rb3i191aik0kr9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBoww2PHI2aFjsQ7o0Ud-bR5mS59NH1Xi0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
