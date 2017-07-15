@@ -3,8 +3,12 @@ package com.himanshu.achats;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -20,6 +24,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -53,6 +58,7 @@ public class LoginActivity extends AppCompatActivity {
     TextView register, fpwd;
     private FirebaseAuth mAuth;
     private ProgressBar progressBar;
+    boolean doubleBackToExitPressedOnce = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,29 +77,37 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(final View view) {
                 String email = mEmailView.getText().toString();
                 String password = mPasswordView.getText().toString();
-                progressBar.setVisibility(View.VISIBLE);
-                mAuth.signInWithEmailAndPassword(email, password)
-                        .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
-                                    Toast.makeText(LoginActivity.this, "Logged In", Toast.LENGTH_SHORT).show();
-                                    Intent intent = new Intent(LoginActivity.this, UserType.class);
-                                    startActivity(intent);
-                                } else {
-                                    Snackbar.make(view, task.getException().getMessage(), Snackbar.LENGTH_INDEFINITE)
-                                            .setAction("DISMISS", new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View v) {
-                                                }
-                                            })
-                                            .show();
+                if(!isNetworkAvailable()){
+                    Toast.makeText(LoginActivity.this, "Check Network Connectivity", Toast.LENGTH_SHORT).show();
+                }
+                else if(email.equals("") || password.equals("")){
+                    Toast.makeText(LoginActivity.this, "Please  fill all elntries.", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    progressBar.setVisibility(View.VISIBLE);
+                    mAuth.signInWithEmailAndPassword(email, password)
+                            .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    if (task.isSuccessful()) {
+                                        Toast.makeText(LoginActivity.this, "Logged In", Toast.LENGTH_SHORT).show();
+                                        Intent intent = new Intent(LoginActivity.this, UserType.class);
+                                        startActivity(intent);
+                                    } else {
+                                        Snackbar.make(view, task.getException().getMessage(), Snackbar.LENGTH_INDEFINITE)
+                                                .setAction("DISMISS", new View.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View v) {
+                                                    }
+                                                })
+                                                .show();
 
+                                    }
+
+                                    progressBar.setVisibility(View.GONE);
                                 }
-
-                                progressBar.setVisibility(View.GONE);
-                            }
-                        });
+                            });
+                }
             }
         });
 
@@ -139,6 +153,36 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         mLoginFormView = findViewById(R.id.login_form);
+    }
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        if (doubleBackToExitPressedOnce) {
+            //super.onBackPressed();
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.addCategory(Intent.CATEGORY_HOME);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+
+        }
+
+        this.doubleBackToExitPressedOnce = true;
+        Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
+
+        new Handler().postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                doubleBackToExitPressedOnce=false;
+            }
+        }, 2000);
     }
 
 
